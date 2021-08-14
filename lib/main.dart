@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:object_detection_app/splash_screen.dart';
+import 'package:object_detection_app/home_page.dart';
+import 'package:camera/camera.dart';
 
-void main() {
+List<CameraDescription>? cameras;
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  cameras = await availableCameras();
   runApp(MyApp());
 }
 
@@ -11,7 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Object Detection',
-      home: SplashScreen(),
+      home: HomePage(),
     );
   }
 }
