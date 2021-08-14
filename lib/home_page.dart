@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:tflite/tflite.dart';
 import 'main.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,6 +13,13 @@ class _HomePageState extends State<HomePage> {
   String result = "";
   CameraController? cameraController;
   CameraImage? imgCamera;
+
+  loadModel() async {
+    await Tflite.loadModel(
+      model: 'mobilenet_v1_1.0_224.tflite',
+      labels: 'mobilenet_v1_1.0_224.txt',
+    );
+  }
 
   initCamera() {
     cameraController = CameraController(cameras![0], ResolutionPreset.medium);
@@ -31,6 +39,19 @@ class _HomePageState extends State<HomePage> {
         );
       });
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadModel();
+  }
+
+  @override
+  void dispose() async {
+    super.dispose();
+    await Tflite.close();
+    cameraController!.dispose();
   }
 
   @override
@@ -57,10 +78,39 @@ class _HomePageState extends State<HomePage> {
                   margin: EdgeInsets.all(10),
                   height: MediaQuery.of(context).size.height * 0.65,
                   width: double.infinity,
-                  child: Icon(
-                    Icons.camera_outlined,
-                    color: Colors.amber,
-                    size: 100,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () {
+                        initCamera();
+                      },
+                      borderRadius: BorderRadius.circular(18),
+                      highlightColor: Colors.amber.shade100,
+                      splashColor: Colors.amber.shade200,
+                      child: imgCamera == null
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.camera_alt,
+                                  size: 75,
+                                  color: Colors.amber,
+                                ),
+                                Text(
+                                  'Kamerayı açmak için tıklayın',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontFamily: 'Raleway',
+                                  ),
+                                )
+                              ],
+                            )
+                          : AspectRatio(
+                              aspectRatio: cameraController!.value.aspectRatio,
+                              child: CameraPreview(cameraController!),
+                            ),
+                    ),
                   ),
                 ),
               ),
@@ -80,17 +130,14 @@ class _HomePageState extends State<HomePage> {
                   margin: EdgeInsets.all(10),
                   width: double.infinity,
                   height: MediaQuery.of(context).size.height * 0.25,
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(18),
-                      onTap: () {},
-                      highlightColor: Colors.amber.shade100,
-                      splashColor: Colors.amber.shade200,
-                      child: Icon(
-                        Icons.camera_alt,
-                        size: 75,
-                        color: Colors.amber,
+                  child: Center(
+                    child: Text(
+                      'Görüntülenen objenin ismi placeholder',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontFamily: 'Raleway',
+                        color: Colors.white,
                       ),
                     ),
                   ),

@@ -30,10 +30,12 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_native_splash: ^1.2.1
   camera: ^0.8.1+7
+  tflite: ^1.1.2
+  
 
 flutter_native_splash:
   color: "#272624"
-  image: assets/images/splash_screen6.png
+  image: assets/images/splash_screen.png
   android: true
   ios: true
   web: true
@@ -73,10 +75,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: Raleway
+      fonts:
+        - asset: assets/fonts/Raleway-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
