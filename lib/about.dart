@@ -107,7 +107,7 @@ class AboutPage extends StatelessWidget {
               ),
               padding: EdgeInsets.all(10),
               margin: EdgeInsets.all(10),
-              height: 300,
+              height: 170,
               width: double.infinity,
               child: Column(
                 children: [
@@ -143,7 +143,7 @@ class AboutPage extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             SizedBox(
-                              height: 40,
+                              height: 25,
                             ),
                             Text(
                               'Mete Kaya',
@@ -196,6 +196,11 @@ class AboutPage extends StatelessWidget {
                       ],
                     ),
                   ),
+                  // SizedBox(height: 30),
+                  // Text(
+                  //   'Proje Linki',
+                  //   style: TextStyle(fontSize: 40),
+                  // )
                 ],
               ),
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:object_detection_app/about.dart';
 import 'package:object_detection_app/camera_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wave/config.dart';
@@ -109,7 +110,8 @@ class HomePage extends StatelessWidget {
                   color: Colors.grey.shade800,
                   borderRadius: BorderRadius.circular(18),
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () =>
+                        Navigator.pushNamed(context, AboutPage.routeName),
                     borderRadius: BorderRadius.circular(18),
                     highlightColor: Colors.amber.shade100,
                     splashColor: Colors.amber.shade200,
@@ -139,7 +141,7 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Bana buradan ulaşabilirsin',
+                      'Diğer Projelerim İçin',
                       style: TextStyle(color: Colors.white),
                     ),
                     Expanded(

@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(fontFamily: 'Raleway'),
       debugShowCheckedModeBanner: false,
       title: 'Object Detection',
-      home: AboutPage(),
+      home: HomePage(),
       routes: {
         CameraPage.routeName: (ctx) => CameraPage(),
         AboutPage.routeName: (ctx) => AboutPage(),
