@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:object_detection_app/about.dart';
 import 'package:object_detection_app/camera_page.dart';
 import 'package:camera/camera.dart';
 import 'package:object_detection_app/home_page.dart';
@@ -18,9 +19,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(fontFamily: 'Raleway'),
       debugShowCheckedModeBanner: false,
       title: 'Object Detection',
-      home: HomePage(),
+      home: AboutPage(),
       routes: {
         CameraPage.routeName: (ctx) => CameraPage(),
+        AboutPage.routeName: (ctx) => AboutPage(),
       },
     );
   }
