@@ -1,187 +1,224 @@
-import 'dart:developer';
-import 'dart:io';
-
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:tflite/tflite.dart';
-import 'main.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:object_detection_app/camera_page.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:wave/config.dart';
+import 'package:wave/wave.dart';
 
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
+const _urlGit = 'https://github.com/metekaya';
+const _urlLinkedIn = 'https://www.linkedin.com/in/mete-kaya-2a57b31a7/';
 
-class _HomePageState extends State<HomePage> {
-  bool isWorking = false;
-  String result = "";
-  CameraController? cameraController;
-  CameraImage? imgCamera;
-
-  loadModel() async {
-    await Tflite.loadModel(
-      model: 'assets/tflite/mobilenet_v1_1.0_224.tflite',
-      labels: 'assets/tflite/mobilenet_v1_1.0_224.txt',
-    );
-  }
-
-  initCamera() {
-    cameraController = CameraController(cameras![0], ResolutionPreset.medium);
-    cameraController!.initialize().then((value) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        cameraController!.startImageStream(
-          (imagesFromStream) => {
-            if (!isWorking)
-              {
-                isWorking = true,
-                imgCamera = imagesFromStream,
-                runModelFromStreamFrames(),
-              }
-          },
-        );
-      });
-    });
-  }
-
-  runModelFromStreamFrames() async {
-    if (imgCamera != null) {
-      var recognitions = await Tflite.runModelOnFrame(
-        bytesList: imgCamera!.planes.map((plane) {
-          return plane.bytes;
-        }).toList(),
-        imageHeight: imgCamera!.height,
-        imageWidth: imgCamera!.width,
-        imageMean: 127.5,
-        imageStd: 127.5,
-        rotation: 90,
-        numResults: 2,
-        threshold: 0.1,
-        asynch: true,
-      );
-      result = "";
-
-      recognitions!.forEach((response) {
-        result += response["label"] +
-            "  " +
-            (response["confidence"] as double).toStringAsFixed(2) +
-            "\n\n";
-        log(result);
-      });
-
-      setState(() {
-        result;
-      });
-
-      isWorking = false;
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    loadModel();
-  }
-
-  @override
-  void dispose() async {
-    super.dispose();
-    await Tflite.close();
-    cameraController!.dispose();
-  }
+class HomePage extends StatelessWidget {
+  void _launchGithub() async => await canLaunch(_urlGit)
+      ? await launch(_urlGit)
+      : throw 'Could not launch $_urlGit';
+  void _launchLinkedIn() async => await canLaunch(_urlLinkedIn)
+      ? await launch(_urlLinkedIn)
+      : throw 'Could not launch $_urlLinkedIn';
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: SafeArea(
-        child: Scaffold(
-          body: Column(
-            children: [
-              Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.deepPurple.shade800,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.7),
-                        spreadRadius: 5,
-                        blurRadius: 5,
-                        offset: Offset(0, 5), // changes position of shadow
-                      )
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.grey.shade900,
+        body: Stack(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height * 0.95,
+              child: RotatedBox(
+                quarterTurns: 2,
+                child: WaveWidget(
+                  config: CustomConfig(
+                    gradients: [
+                      [
+                        Colors.red,
+                        Colors.lime,
+                      ],
+                      [
+                        Colors.amber,
+                        Colors.grey,
+                      ]
                     ],
+                    durations: [19440, 10800],
+                    heightPercentages: [0.20, 0.20],
+                    blur: MaskFilter.blur(BlurStyle.solid, 10),
+                    gradientBegin: Alignment.bottomLeft,
+                    gradientEnd: Alignment.topRight,
                   ),
-                  margin: EdgeInsets.all(10),
-                  height: MediaQuery.of(context).size.height * 0.65,
-                  width: double.infinity,
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () {
-                        initCamera();
-                      },
-                      borderRadius: BorderRadius.circular(18),
-                      highlightColor: Colors.amber.shade100,
-                      splashColor: Colors.amber.shade200,
-                      child: imgCamera == null
-                          ? Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.camera_alt,
-                                  size: 75,
-                                  color: Colors.amber,
-                                ),
-                                Text(
-                                  'Kamerayı açmak için tıklayın',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontFamily: 'Raleway',
-                                  ),
-                                )
-                              ],
-                            )
-                          : AspectRatio(
-                              aspectRatio: cameraController!.value.aspectRatio,
-                              child: CameraPreview(cameraController!),
-                            ),
-                    ),
+                  waveAmplitude: 0,
+                  size: Size(
+                    double.infinity,
+                    double.infinity,
                   ),
                 ),
               ),
-              Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.7),
-                          spreadRadius: 5,
-                          blurRadius: 5,
-                          offset: Offset(0, 3), // changes position of shadow
-                        )
-                      ],
+            ),
+            Column(
+              children: [
+                Center(
+                  child: Container(
+                    margin: EdgeInsets.only(top: 40),
+                    height: 200,
+                    width: 200,
+                    decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: Colors.pink.shade900),
-                  margin: EdgeInsets.all(10),
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height * 0.25,
-                  child: Center(
-                    child: Text(
-                      result,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontFamily: 'Raleway',
-                        color: Colors.white,
+                      image: DecorationImage(
+                          image: AssetImage('assets/images/feedlogo.png'),
+                          fit: BoxFit.cover),
+                      shape: BoxShape.rectangle,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'Obje Dedektörü',
+                  style: TextStyle(
+                    fontSize: 40,
+                    color: Colors.grey.shade800,
+                  ),
+                ),
+                SizedBox(height: 45),
+                Material(
+                  color: Colors.grey.shade800,
+                  borderRadius: BorderRadius.circular(18),
+                  child: InkWell(
+                    onTap: () =>
+                        Navigator.pushNamed(context, CameraPage.routeName),
+                    borderRadius: BorderRadius.circular(18),
+                    highlightColor: Colors.amber.shade100,
+                    splashColor: Colors.amber.shade200,
+                    child: Container(
+                      width: 200,
+                      height: 45,
+                      child: Center(
+                        child: Text(
+                          'Başlat',
+                          style: TextStyle(
+                              fontSize: 28, color: Colors.amber.shade300),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
+                SizedBox(
+                  height: 27,
+                ),
+                Material(
+                  color: Colors.grey.shade800,
+                  borderRadius: BorderRadius.circular(18),
+                  child: InkWell(
+                    onTap: () {},
+                    borderRadius: BorderRadius.circular(18),
+                    highlightColor: Colors.amber.shade100,
+                    splashColor: Colors.amber.shade200,
+                    child: Container(
+                      width: 200,
+                      height: 45,
+                      child: Center(
+                        child: Text(
+                          'Hakkında',
+                          style: TextStyle(
+                              fontSize: 28, color: Colors.amber.shade300),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 100),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Divider(
+                          color: Colors.amber,
+                          thickness: 1,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      'Bana buradan ulaşabilirsin',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Divider(
+                          color: Colors.amber,
+                          thickness: 1,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    OutlineButton(
+                      onPressed: _launchGithub,
+                      shape: StadiumBorder(),
+                      highlightedBorderColor: Colors.red.shade300,
+                      borderSide: BorderSide(
+                        width: 1,
+                        color: Colors.white,
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Ionicons.logo_github,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            'Github ',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      width: 30,
+                    ),
+                    OutlineButton(
+                      onPressed: _launchLinkedIn,
+                      shape: StadiumBorder(),
+                      highlightedBorderColor: Colors.blue.shade300,
+                      borderSide: BorderSide(
+                        width: 1,
+                        color: Colors.blue.shade400,
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Ionicons.logo_linkedin,
+                            size: 16,
+                            color: Colors.blue.shade400,
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            'Linkedin',
+                            style: TextStyle(
+                              color: Colors.blue.shade400,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

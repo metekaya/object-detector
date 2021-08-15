@@ -31,11 +31,14 @@ dependencies:
   flutter_native_splash: ^1.2.1
   camera: ^0.8.1+7
   tflite: ^1.1.2
+  wave: ^0.2.0
+  ionicons: ^0.1.2
+  url_launcher: ^6.0.9
   
 
 flutter_native_splash:
   color: "#272624"
-  image: assets/images/splash_screen.png
+  image: assets/images/feedlogo.png
   android: true
   ios: true
   web: true
@@ -58,6 +61,7 @@ flutter:
   assets:
     - assets/tflite/mobilenet_v1_1.0_224.tflite
     - assets/tflite/mobilenet_v1_1.0_224.txt
+    - assets/images/feedlogo.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
