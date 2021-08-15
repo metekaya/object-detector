@@ -1,3 +1,6 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:tflite/tflite.dart';
@@ -16,8 +19,8 @@ class _HomePageState extends State<HomePage> {
 
   loadModel() async {
     await Tflite.loadModel(
-      model: 'mobilenet_v1_1.0_224.tflite',
-      labels: 'mobilenet_v1_1.0_224.txt',
+      model: 'assets/tflite/mobilenet_v1_1.0_224.tflite',
+      labels: 'assets/tflite/mobilenet_v1_1.0_224.txt',
     );
   }
 
@@ -34,11 +37,45 @@ class _HomePageState extends State<HomePage> {
               {
                 isWorking = true,
                 imgCamera = imagesFromStream,
+                runModelFromStreamFrames(),
               }
           },
         );
       });
     });
+  }
+
+  runModelFromStreamFrames() async {
+    if (imgCamera != null) {
+      var recognitions = await Tflite.runModelOnFrame(
+        bytesList: imgCamera!.planes.map((plane) {
+          return plane.bytes;
+        }).toList(),
+        imageHeight: imgCamera!.height,
+        imageWidth: imgCamera!.width,
+        imageMean: 127.5,
+        imageStd: 127.5,
+        rotation: 90,
+        numResults: 2,
+        threshold: 0.1,
+        asynch: true,
+      );
+      result = "";
+
+      recognitions!.forEach((response) {
+        result += response["label"] +
+            "  " +
+            (response["confidence"] as double).toStringAsFixed(2) +
+            "\n\n";
+        log(result);
+      });
+
+      setState(() {
+        result;
+      });
+
+      isWorking = false;
+    }
   }
 
   @override
@@ -132,7 +169,7 @@ class _HomePageState extends State<HomePage> {
                   height: MediaQuery.of(context).size.height * 0.25,
                   child: Center(
                     child: Text(
-                      'Görüntülenen objenin ismi placeholder',
+                      result,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 30,
@@ -142,7 +179,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),

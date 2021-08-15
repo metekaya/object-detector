@@ -56,8 +56,8 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/
-  
+    - assets/tflite/mobilenet_v1_1.0_224.tflite
+    - assets/tflite/mobilenet_v1_1.0_224.txt
 
   # To add assets to your application, add an assets section, like this:
   # assets:
