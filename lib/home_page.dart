@@ -164,7 +164,7 @@ class HomePage extends StatelessWidget {
                     OutlineButton(
                       onPressed: _launchGithub,
                       shape: StadiumBorder(),
-                      highlightedBorderColor: Colors.red.shade300,
+                      highlightedBorderColor: Colors.grey.shade100,
                       borderSide: BorderSide(
                         width: 1,
                         color: Colors.white,

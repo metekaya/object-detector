@@ -40,7 +40,7 @@ dependencies:
 
 flutter_native_splash:
   color: "#272624"
-  image: assets/images/feedlogo.png
+  image: assets/images/feedlogotext.png
   android: true
   ios: true
   web: true
